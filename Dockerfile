@@ -27,6 +27,6 @@ RUN apt-get update && \
 
 
 
-apk update
-apk add curl
+apt-get update
+apt install curl
 
