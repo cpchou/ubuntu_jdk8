@@ -83,3 +83,6 @@ ENV LC_NUMERIC="zh_TW.UTF-8"
 ENV LC_TIME="zh_TW.UTF-8"
 ENV NLS_LANG=.AL32UTF8
 
+apk update
+apk add curl
+
