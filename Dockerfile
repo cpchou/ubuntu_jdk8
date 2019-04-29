@@ -13,6 +13,7 @@ ENV NLS_LANG=.AL32UTF8
 
 
 RUN apt-get update && \
+  apt install curl \
   apt-get install -y --no-install-recommends locales && \
   locale-gen en_US.UTF-8 && \
   apt-get dist-upgrade -y && \
@@ -24,9 +25,4 @@ RUN apt-get update && \
   apt-get install -y --no-install-recommends oracle-java8-installer oracle-java8-set-default && \
   apt-get clean all
 
-
-
-
-apt-get update
-apt install curl
 
