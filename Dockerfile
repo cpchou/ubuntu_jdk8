@@ -1,9 +1,11 @@
 # AlpineLinux with a glibc-2.29-r0 and Oracle Java 8
 FROM ubuntu:16.04
 
+ENV JAVA_HOME=/usr/lib/jvm/java-8-oracle
 ENV DEBIAN_FRONTEND noninteractive
 ENV LANG=zh_TW.UTF-8
-ENV LC_ALL=zh_TW.UTF-8
+ENV LC_ALL=en_US.UTF-8
+ENV LC_ALL =zh_TW.UTF-8
 ENV LC_CTYPE="zh_TW.UTF-8"
 ENV LC_NUMERIC="zh_TW.UTF-8"
 ENV LC_TIME="zh_TW.UTF-8"
