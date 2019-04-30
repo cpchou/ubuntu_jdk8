@@ -1,83 +1,121 @@
-FROM ubuntu:16.04
+FROM library/ubuntu:18.04
 
-# Java Version and other ENV
-ENV JAVA_VERSION_MAJOR=8 \
-    JAVA_VERSION_MINOR=211 \
-    JAVA_VERSION_BUILD=09 \
-    JAVA_PACKAGE=jdk \
-    JAVA_PACKAGE_VARIANT=nashorn \
-    JAVA_JCE=standard \
-    JAVA_HOME=/opt/jdk \
-    PATH=${PATH}:/opt/jdk/bin \
-    GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc \
-    GLIBC_VERSION=2.29-r0 \
-    LANG=C.UTF-8
-# https://cpchou0701.diskstation.me/jdk/jdk-8u211-linux-x64.tar.gz
+#
+# Ubuntu 18.04.x with Oracle JDK 8
+#
 
-# do all in one step
-RUN set -ex && \
-    apk -U upgrade && \
-    apk add libstdc++ curl ca-certificates bash java-cacerts && \
-    for pkg in glibc-${GLIBC_VERSION} glibc-bin-${GLIBC_VERSION} glibc-i18n-${GLIBC_VERSION}; do curl -sSL ${GLIBC_REPO}/releases/download/${GLIBC_VERSION}/${pkg}.apk -o /tmp/${pkg}.apk; done && \
-    apk add --allow-untrusted /tmp/*.apk && \
-    rm -v /tmp/*.apk && \
-    ( /usr/glibc-compat/bin/localedef --force --inputfile POSIX --charmap UTF-8 C.UTF-8 || true ) && \
-    echo "export LANG=C.UTF-8" > /etc/profile.d/locale.sh && \
-    /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib && \
-    mkdir /opt && \
-    curl -jksSLH "Cookie: oraclelicense=accept-securebackup-cookie" -o /tmp/java.tar.gz \
-      https://cpchou0701.diskstation.me/jdk/${JAVA_PACKAGE}-${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-linux-x64.tar.gz && \
-    echo "${JAVA_PACKAGE_SHA256}  /tmp/java.tar.gz" > /tmp/java.tar.gz.sha256 && \
-    gunzip /tmp/java.tar.gz && \
-    tar -C /opt -xf /tmp/java.tar && \
-    ln -s /opt/jdk1.${JAVA_VERSION_MAJOR}.0_${JAVA_VERSION_MINOR} /opt/jdk && \
-    cd /opt/jdk/ && ln -s ./jre/bin ./bin && \
-    if [ "${JAVA_JCE}" == "unlimited" ]; then echo "Installing Unlimited JCE policy" && \
-      curl -jksSLH "Cookie: oraclelicense=accept-securebackup-cookie" -o /tmp/jce_policy-${JAVA_VERSION_MAJOR}.zip \
-        http://download.oracle.com/otn-pub/java/jce/${JAVA_VERSION_MAJOR}/jce_policy-${JAVA_VERSION_MAJOR}.zip && \
-      cd /tmp && unzip /tmp/jce_policy-${JAVA_VERSION_MAJOR}.zip && \
-      cp -v /tmp/UnlimitedJCEPolicyJDK8/*.jar /opt/jdk/jre/lib/security/; \
-    fi && \
-    sed -i s/#networkaddress.cache.ttl=-1/networkaddress.cache.ttl=10/ $JAVA_HOME/jre/lib/security/java.security && \
-    apk del curl glibc-i18n && \
-    rm -rf /opt/jdk/jre/plugin \
-           /opt/jdk/jre/bin/javaws \
-           /opt/jdk/jre/bin/orbd \
-           /opt/jdk/jre/bin/pack200 \
-           /opt/jdk/jre/bin/policytool \
-           /opt/jdk/jre/bin/rmid \
-           /opt/jdk/jre/bin/rmiregistry \
-           /opt/jdk/jre/bin/servertool \
-           /opt/jdk/jre/bin/tnameserv \
-           /opt/jdk/jre/bin/unpack200 \
-           /opt/jdk/jre/lib/javaws.jar \
-           /opt/jdk/jre/lib/deploy* \
-           /opt/jdk/jre/lib/desktop \
-           /opt/jdk/jre/lib/*javafx* \
-           /opt/jdk/jre/lib/*jfx* \
-           /opt/jdk/jre/lib/amd64/libdecora_sse.so \
-           /opt/jdk/jre/lib/amd64/libprism_*.so \
-           /opt/jdk/jre/lib/amd64/libfxplugins.so \
-           /opt/jdk/jre/lib/amd64/libglass.so \
-           /opt/jdk/jre/lib/amd64/libgstreamer-lite.so \
-           /opt/jdk/jre/lib/amd64/libjavafx*.so \
-           /opt/jdk/jre/lib/amd64/libjfx*.so \
-           /opt/jdk/jre/lib/ext/jfxrt.jar \
-           /opt/jdk/jre/lib/oblique-fonts \
-           /opt/jdk/jre/lib/plugin.jar \
-           /tmp/* /var/cache/apk/* && \
-    ln -sf /etc/ssl/certs/java/cacerts $JAVA_HOME/jre/lib/security/cacerts && \
-    echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
-
-# EOF
+RUN \
+  apt-get -y update && \
+  apt-get -y install software-properties-common && \
+  apt-get -y install --reinstall locales && \
+  rm -rf /root/.cache && \
+  apt-get purge -y $(apt-cache search '~c' | awk '{ print $2 }') && \
+  apt-get -y autoremove && \
+  apt-get -y autoclean && \
+  apt-get -y clean all && \
+  rm -rf /var/lib/apt/lists/* && \
+  rm -rf /var/cache/apt && \
+  rm -rf /tmp/*
 
 
+RUN locale-gen zh_TW.UTF-8
 
-ENV LANG=zh_TW.UTF-8
-ENV LC_CTYPE="zh_TW.UTF-8"
-ENV LC_NUMERIC="zh_TW.UTF-8"
-ENV LC_TIME="zh_TW.UTF-8"
-ENV NLS_LANG=.AL32UTF8
+ENV LANG zh_TW.UTF-8
+ENV LANGUAGE zh_TW.UTF-8
+ENV LC_ALL zh_TW.UTF-8
 
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 
-
+RUN \
+  apt-get -y update && \
+  apt-get -y install software-properties-common && \
+  apt-get -y install --reinstall locales && \
+  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+  add-apt-repository -y ppa:webupd8team/java && \
+  add-apt-repository -y ppa:git-core/ppa && \
+  apt-get -y update && \
+  apt-get -y upgrade && \
+  apt-get -y install curl wget unzip vim && \
+  apt-get -y install git=1:2.20.* && \
+  apt-get -y install oracle-java8-installer && \
+  apt-get -y install oracle-java8-unlimited-jce-policy && \
+  apt-get -y install oracle-java8-set-default && \
+  rm -rf \
+        ${JAVA_HOME}/*/javaws \
+        ${JAVA_HOME}/*/jjs \
+        ${JAVA_HOME}/*/keytool \
+        ${JAVA_HOME}/*/orbd \
+        ${JAVA_HOME}/*/pack200 \
+        ${JAVA_HOME}/*/policytool \
+        ${JAVA_HOME}/*/rmid \
+        ${JAVA_HOME}/*/rmiregistry \
+        ${JAVA_HOME}/*/servertool \
+        ${JAVA_HOME}/*/tnameserv \
+        ${JAVA_HOME}/*/unpack200 \
+        ${JAVA_HOME}/*/*javafx* \
+        ${JAVA_HOME}/*/*jfx* \
+        ${JAVA_HOME}/*/amd64/libdecora_sse.so \
+        ${JAVA_HOME}/*/amd64/libfxplugins.so \
+        ${JAVA_HOME}/*/amd64/libglass.so \
+        ${JAVA_HOME}/*/amd64/libgstreamer-lite.so \
+        ${JAVA_HOME}/*/amd64/libjavafx*.so \
+        ${JAVA_HOME}/*/amd64/libjfx*.so \
+        ${JAVA_HOME}/*/amd64/libprism_*.so \
+        ${JAVA_HOME}/*/deploy* \
+        ${JAVA_HOME}/*/desktop \
+        ${JAVA_HOME}/*/ext/jfxrt.jar \
+        ${JAVA_HOME}/*/ext/nashorn.jar \
+        ${JAVA_HOME}/*/javaws.jar \
+        ${JAVA_HOME}/*/jfr \
+        ${JAVA_HOME}/*/jfr.jar \
+        ${JAVA_HOME}/*/missioncontrol \
+        ${JAVA_HOME}/*/oblique-fonts \
+        ${JAVA_HOME}/*/plugin.jar \
+        ${JAVA_HOME}/*/visualvm \
+        ${JAVA_HOME}/man \
+        ${JAVA_HOME}/plugin \
+        ${JAVA_HOME}/*.txt \
+        ${JAVA_HOME}/*/*/javaws \
+        ${JAVA_HOME}/*/*/jjs \
+        ${JAVA_HOME}/*/*/keytool \
+        ${JAVA_HOME}/*/*/orbd \
+        ${JAVA_HOME}/*/*/pack200 \
+        ${JAVA_HOME}/*/*/policytool \
+        ${JAVA_HOME}/*/*/rmid \
+        ${JAVA_HOME}/*/*/rmiregistry \
+        ${JAVA_HOME}/*/*/servertool \
+        ${JAVA_HOME}/*/*/tnameserv \
+        ${JAVA_HOME}/*/*/unpack200 \
+        ${JAVA_HOME}/*/*/*javafx* \
+        ${JAVA_HOME}/*/*/*jfx* \
+        ${JAVA_HOME}/*/*/amd64/libdecora_sse.so \
+        ${JAVA_HOME}/*/*/amd64/libfxplugins.so \
+        ${JAVA_HOME}/*/*/amd64/libglass.so \
+        ${JAVA_HOME}/*/*/amd64/libgstreamer-lite.so \
+        ${JAVA_HOME}/*/*/amd64/libjavafx*.so \
+        ${JAVA_HOME}/*/*/amd64/libjfx*.so \
+        ${JAVA_HOME}/*/*/amd64/libprism_*.so \
+        ${JAVA_HOME}/*/*/deploy* \
+        ${JAVA_HOME}/*/*/desktop \
+        ${JAVA_HOME}/*/*/ext/jfxrt.jar \
+        ${JAVA_HOME}/*/*/ext/nashorn.jar \
+        ${JAVA_HOME}/*/*/javaws.jar \
+        ${JAVA_HOME}/*/*/jfr \
+        ${JAVA_HOME}/*/*/jfr \
+        ${JAVA_HOME}/*/*/jfr.jar \
+        ${JAVA_HOME}/*/*/missioncontrol \
+        ${JAVA_HOME}/*/*/oblique-fonts \
+        ${JAVA_HOME}/*/*/plugin.jar \
+        ${JAVA_HOME}/*/*/visualvm \
+        ${JAVA_HOME}/*/man \
+        ${JAVA_HOME}/*/plugin \
+        ${JAVA_HOME}/*.txt && \
+        rm -rf /root/.cache && \
+        apt-get purge -y $(apt-cache search '~c' | awk '{ print $2 }') && \
+        apt-get -y autoremove && \
+        apt-get -y autoclean && \
+        apt-get -y clean all && \
+        rm -rf /var/lib/apt/lists/* && \
+        rm -rf /var/cache/apt && \
+        rm -rf /var/cache/oracle-jdk8-installer && \
+        rm -rf /tmp/*
