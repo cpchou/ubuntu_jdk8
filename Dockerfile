@@ -4,7 +4,7 @@ FROM library/ubuntu:16.04
 #
 
 
-RUN locale-gen zh_TW.UTF-8
+# RUN locale-gen zh_TW.UTF-8
 
 ENV LANG zh_TW.UTF-8
 ENV LANGUAGE zh_TW.UTF-8
