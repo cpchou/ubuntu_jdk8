@@ -30,6 +30,15 @@ ENV PATH $PATH:$JAVA_HOME
 ENV PATH /opt/jdk/bin:${PATH}
 
 
+RUN apt-get update
+RUN apt-get install -y locales
+RUN locale-gen zh_TW.UTF-8
+RUN update-locale
+RUN echo 'export LANGUAGE="zh_TW.UTF-8"' >> /root/.bashrc
+RUN echo 'export LANG="zh_TW.UTF-8"' >> /root/.bashrc
+RUN echo 'export LC_ALL="zh_TW.UTF-8"' >> /root/.bashrc
+
+
 ENV MAVEN_VERSION 3.5.4
 ENV MAVEN_HOME /usr/lib/mvn
 ENV PATH $MAVEN_HOME/bin:$PATH
@@ -38,3 +47,5 @@ RUN wget http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/ap
   tar -zxvf apache-maven-$MAVEN_VERSION-bin.tar.gz && \
   rm apache-maven-$MAVEN_VERSION-bin.tar.gz && \
   mv apache-maven-$MAVEN_VERSION /usr/lib/mvn
+
+RUN apt-get install -y git
