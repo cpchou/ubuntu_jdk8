@@ -26,9 +26,9 @@ RUN apt install -y gzip
 
 RUN cd /opt
 RUN wget https://cpchou0701.diskstation.me/jdk/jdk-8u211-linux-x64.tar.gz
-RUN tar xzf jdk-8u211-linux-x64.tar.gz
 RUN ln -s  /opt/jdk1.8.0_211 /opt/jdk
-RUN rm -f jdk-8u211-linux-x64.tar.gz
+RUN tar xzf jdk-8u211-linux-x64.tar.gz
+# RUN rm -f jdk-8u211-linux-x64.tar.gz
 
 ENV JAVA_HOME /opt/jdk
 ENV PATH $PATH:$JAVA_HOME
