@@ -33,12 +33,16 @@ RUN rm -f jdk-8u211-linux-x64.tar.gz
 ENV JAVA_HOME /opt/jdk
 ENV PATH $PATH:$JAVA_HOME
 ENV PATH /opt/jdk/bin:${PATH}
-
+RUN echo "export JAVA_HOME=/opt/jdk" >> /etc/profile
 
 
 ENV MAVEN_VERSION 3.5.4
 ENV MAVEN_HOME /usr/lib/mvn
 ENV PATH $MAVEN_HOME/bin:$PATH
+RUN echo "export MAVEN_HOME=/usr/lib/mvn" >> /etc/profile
+RUN echo "export PATH=$JAVA_HOME/bin:$MAVEN_HOME/bin:$PATH" >> /etc/profile
+
+
 
 RUN wget http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz && \
   tar -zxvf apache-maven-$MAVEN_VERSION-bin.tar.gz && \
