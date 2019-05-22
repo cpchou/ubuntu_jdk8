@@ -8,6 +8,10 @@ FROM library/ubuntu:16.04
 
 
 RUN apt-get update
+
+RUN apt-get install -y tzdata
+RUN ln -fs /usr/share/zoneinfo/Asia/Taipei /etc/localtime
+
 RUN apt-get install -y locales
 RUN locale-gen zh_TW.UTF-8
 RUN update-locale
