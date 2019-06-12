@@ -30,7 +30,7 @@ RUN apt install -y gzip
 RUN apt install -y unzip
 
 RUN wget https://github.com/ojdkbuild/contrib_jdk8u-ci/releases/download/jdk8u212-b04/jdk-8u212-ojdkbuild-linux-x64.zip
-RUN ln -s  /opt/jdk-8u212-ojdkbuild-linux-x64 /opt/jdk
+RUN ln -sf  /jdk-8u212-ojdkbuild-linux-x64 /opt/jdk
 RUN cd /opt
 #RUN tar xzf jdk-8u212-ojdkbuild-linux-x64.zip -C /opt
 RUN unzip ../jdk-8u212-ojdkbuild-linux-x64.zip
