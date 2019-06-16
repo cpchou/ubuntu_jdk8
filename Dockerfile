@@ -59,7 +59,6 @@ RUN wget http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/ap
 
 RUN apt-get install -y git
 RUN apt install -y net-tools
-RUN apt install -y iputils-ping
 RUN apt install -y telnet
 RUN apt-get install -y openssh-server
 RUN /etc/init.d/ssh restart
