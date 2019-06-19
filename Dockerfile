@@ -57,6 +57,11 @@ RUN wget http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/ap
   rm apache-maven-$MAVEN_VERSION-bin.tar.gz && \
   mv apache-maven-$MAVEN_VERSION /usr/lib/mvn
 
+# ttf-mscorefonts-installer安裝
+apt update
+echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
+apt install -y ttf-mscorefonts-installer
+
 #安裝字型
 RUN apt install -y fontconfig
 RUN fc-cache -f -v
