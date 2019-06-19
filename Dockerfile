@@ -57,6 +57,16 @@ RUN wget http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/ap
   rm apache-maven-$MAVEN_VERSION-bin.tar.gz && \
   mv apache-maven-$MAVEN_VERSION /usr/lib/mvn
 
+#安裝字型
+RUN apt install -y fontconfig
+RUN fc-cache -f -v
+RUN cd /usr/share/fonts/truetype
+#全字庫正楷體
+RUN wget https://cpchou0701.diskstation.me/fonts/TW-Kai-98_1.ttf
+#全字庫宋體
+RUN wget https://cpchou0701.diskstation.me/fonts/TW-Sung-98_1.ttf
+RUN fc-cache -f -v
+
 RUN apt-get install -y git
 RUN apt install -y net-tools
 RUN apt install -y telnet
