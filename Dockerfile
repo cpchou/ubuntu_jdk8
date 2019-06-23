@@ -70,10 +70,11 @@ RUN cd /usr/share/fonts/truetype
 RUN wget https://cpchou0701.diskstation.me/fonts/TW-Kai-98_1.ttf
 #全字庫宋體
 RUN wget https://cpchou0701.diskstation.me/fonts/TW-Sung-98_1.ttf
+RUN mv *.ttf /usr/share/fonts/truetype
 RUN fc-cache -f -v
 
 RUN apt-get install -y git
 RUN apt install -y net-tools
 RUN apt install -y telnet
 RUN apt-get install -y openssh-server
-RUN /etc/init.d/ssh restart
+
