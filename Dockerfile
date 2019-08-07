@@ -22,6 +22,7 @@ RUN echo 'export LC_ALL="zh_TW.UTF-8"' >> /root/.bashrc
 ENV LANG zh_TW.UTF-8
 ENV LANGUAGE zh_TW.UTF-8
 ENV LC_ALL zh_TW.UTF-8
+ENV TZ Asia/Taipei
 
 RUN apt-get update
 RUN apt install -y curl
